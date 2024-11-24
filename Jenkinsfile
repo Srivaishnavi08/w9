@@ -22,21 +22,16 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Delete and start Minikube cluster
-                    bat 'minikube delete'
-                    bat 'minikube start'
-                    
-                    // Enable the dashboard addon
-                    bat 'minikube addons enable dashboard'
-                    
-                    // Apply Kubernetes resources
-                    bat 'kubectl apply -f my-kube1-deployment.yaml'
-                    bat 'kubectl apply -f my-kube1-service.yaml'
-                    
-                    // Expose the Kubernetes Dashboard service
-                    bat 'minikube dashboard'
-                    
-                    echo 'Deploying application...'
+                    // Explicitly set PATH
+                    withEnv(['PATH=C:\\Program Files\\Kubernetes\\Minikube;C:\\Windows\\System32']) {
+                        bat 'minikube version' // Verify Minikube is accessible
+                        bat 'minikube delete || echo "No existing cluster to delete."'
+                        bat 'minikube start'
+                        bat 'minikube addons enable dashboard'
+                        bat 'kubectl apply -f my-kube1-deployment.yaml'
+                        bat 'kubectl apply -f my-kube1-service.yaml'
+                        echo 'Deploying application...'
+                    }
                 }
             }
         }
