@@ -13,8 +13,8 @@ pipeline {
                     echo "Current PATH: ${env.PATH}"
                     
                     // Verify Docker and Minikube commands
-                    bat 'docker --version'
-                    bat 'minikube --version'
+                    bat 'docker version'
+                    bat 'minikube version'
                     
                     // Build Docker image
                     bat 'docker build -t w9-dd-app:latest .'
