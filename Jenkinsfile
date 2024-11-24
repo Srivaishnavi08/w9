@@ -7,8 +7,8 @@ pipeline {
                 script {
                     // Build and push Docker image
                     bat 'docker build -t w9-dd-app:latest .'
-                    bat 'docker tag w9-dd-app:latest app/w9-dh-app:latest'
-                    bat 'docker push app/w9-dh-app:latest'
+                    bat 'docker tag w9-dd-app:latest vaishnavi517/w9-dh-app:latest'
+                    bat 'docker push vaishnavi517/w9-dh-app:latest'
                 }
             }
         }
