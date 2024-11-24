@@ -1,17 +1,29 @@
 pipeline {
-    agent any 
+    agent any
+
+    environment {
+        // Ensure the PATH is correctly set in the environment (replace with your paths if needed)
+        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Program Files\\Kubernetes\\Minikube;${env.PATH}"
+    }
 
     stages {
         stage('Build') {
             steps {
                 script {
-                    // Build and push Docker image
+                    echo "Current PATH: ${env.PATH}"
+                    
+                    // Verify Docker and Minikube commands
+                    bat 'docker --version'
+                    bat 'minikube --version'
+                    
+                    // Build Docker image
                     bat 'docker build -t w9-dd-app:latest .'
                     bat 'docker tag w9-dd-app:latest vaishnavi517/w9-dh-app:latest'
                     bat 'docker push vaishnavi517/w9-dh-app:latest'
                 }
             }
         }
+
         stage('Test') {
             steps {
                 script {
@@ -19,19 +31,31 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy') {
             steps {
                 script {
-                    // Explicitly set PATH
-                    withEnv(['PATH=C:\\Program Files\\Kubernetes\\Minikube;C:\\Windows\\System32']) {
-                        bat 'minikube version' // Verify Minikube is accessible
-                        bat 'minikube delete || echo "No existing cluster to delete."'
-                        bat 'minikube start'
-                        bat 'minikube addons enable dashboard'
-                        bat 'kubectl apply -f my-kube1-deployment.yaml'
-                        bat 'kubectl apply -f my-kube1-service.yaml'
-                        echo 'Deploying application...'
-                    }
+                    // Verify Docker is running in Jenkins environment
+                    bat 'docker info'
+                    
+                    // Check Minikube status
+                    bat 'minikube status'
+
+                    // Delete existing Minikube cluster and start a new one with Docker driver
+                    bat 'minikube delete || echo "No existing cluster to delete."'
+                    bat 'minikube start --driver=docker'
+
+                    // Enable the Minikube dashboard addon
+                    bat 'minikube addons enable dashboard'
+
+                    // Apply Kubernetes resources
+                    bat 'kubectl apply -f my-kube1-deployment.yaml'
+                    bat 'kubectl apply -f my-kube1-service.yaml'
+
+                    // Open the Minikube dashboard
+                    bat 'minikube dashboard'
+
+                    echo 'Deploying application...'
                 }
             }
         }
