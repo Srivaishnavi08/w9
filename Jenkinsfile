@@ -1,11 +1,5 @@
 pipeline {
     agent any
-
-    environment {
-        // Ensure the PATH is correctly set in the environment (replace with your paths if needed)
-        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Program Files\\Kubernetes\\Minikube;${env.PATH}"
-    }
-
     stages {
         stage('Build') {
             steps {
